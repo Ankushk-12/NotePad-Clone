@@ -11,11 +11,11 @@ WORKDIR /src
 
 RUN gradle build
 
-FROM gradle:6.8.0-jdk8
+FROM gradle:6.8.0-jdk8 
  
 RUN mkdir app
 
-COPY --from=build /src/* app/
+COPY --from=build /src/build/libs/lib-1.jar app/app.jar
 
 COPY . /app
 
@@ -25,8 +25,11 @@ EXPOSE 7000:7000
 
 RUN gradle build
 
+ENTRYPOINT [ "java", "-jar", "app.jar" ]
+
+
 # for run Server
-ENTRYPOINT ["gradle", "runServer"]  
+# ENTRYPOINT ["gradle", "runServer"]  
 
 # for the Client side
 # ENTRYPOINT ["gradle", "runClient"]  
