@@ -1,4 +1,3 @@
-
 FROM gradle:6.8.0-jdk8 AS build
 
 COPY . /lib
@@ -9,27 +8,17 @@ COPY . /src
 
 WORKDIR /src
 
-RUN gradle build
+RUN gradle build  
+# RUN gradle fatJar  
 
-FROM gradle:6.8.0-jdk8 
- 
-RUN mkdir app
+FROM openjdk:8-jre-slim
 
-COPY --from=build /src/build/libs/lib-1.jar app/app.jar
+EXPOSE 8970:8970
 
-COPY . /app
+RUN mkdir /app
 
-WORKDIR /app
+# COPY --from=build /src/src/main/resources app/
 
-EXPOSE 7000:7000
+COPY --from=build /src/lib/build/libs/lib-1.jar /app/lib-1.jar
 
-RUN gradle build
-
-ENTRYPOINT [ "java", "-jar", "app.jar" ]
-
-
-# for run Server
-# ENTRYPOINT ["gradle", "runServer"]  
-
-# for the Client side
-# ENTRYPOINT ["gradle", "runClient"]  
+ENTRYPOINT ["java","-jar","/app/lib-1.jar"]
